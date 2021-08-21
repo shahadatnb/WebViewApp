@@ -1,4 +1,4 @@
-package com.eeshoponline.eeshoponline;
+package com.eeshoponline.app;
 
 import org.junit.Test;
 
