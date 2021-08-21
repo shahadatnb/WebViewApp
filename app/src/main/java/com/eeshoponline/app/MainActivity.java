@@ -32,10 +32,14 @@ public class MainActivity extends AppCompatActivity {
         progressBar = findViewById(R.id.progress);
         swipeRefreshLayout = findViewById(R.id.swipe);
 
-
         webView.getSettings().setJavaScriptEnabled(true);
         webView.getSettings().setSupportZoom(false);
+        //webView.getSettings().setBuiltInZoomControls(false);
         webView.getSettings().setDomStorageEnabled(true);
+        //webView.getSettings().setCacheMode(WebSettings.LOAD_NO_CACHE);
+
+        //webView.setScrollBarStyle(WebView.SCROLLBARS_OUTSIDE_OVERLAY);
+        //webView.setScrollbarFadingEnabled(true);
         webView.setWebViewClient(new myWebViewclient());
         webView.loadUrl("https://eeshoponline.com");
 
