@@ -99,7 +99,7 @@ public class MainActivity extends AppCompatActivity {
                 mUploadMessage = uploadMsg;
                 Intent intent = new Intent(Intent.ACTION_GET_CONTENT);
                 intent.addCategory(Intent.CATEGORY_OPENABLE);
-                intent.setType("image/*");
+                intent.setType("image/*"); // |application/pdf
                 startActivityForResult(Intent.createChooser(intent, "File Browser"), FILECHOOSER_RESULTCODE);
             }
 
