@@ -3,6 +3,7 @@ package com.eeshoponline.app;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
+import android.app.DownloadManager;
 import android.content.ActivityNotFoundException;
 import android.content.Intent;
 import android.graphics.Bitmap;
@@ -10,15 +11,16 @@ import android.net.Uri;
 import android.net.http.SslError;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Environment;
 import android.os.Handler;
 import android.view.KeyEvent;
 import android.view.View;
-import android.view.Window;
-import android.view.WindowManager;
+import android.webkit.CookieManager;
+import android.webkit.DownloadListener;
 import android.webkit.SslErrorHandler;
+import android.webkit.URLUtil;
 import android.webkit.ValueCallback;
 import android.webkit.WebChromeClient;
-import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
 import android.widget.ProgressBar;
@@ -53,6 +55,29 @@ public class MainActivity extends AppCompatActivity {
         //webView.setScrollbarFadingEnabled(true);
         webView.setWebViewClient(new myWebViewclient());
         webView.loadUrl("https://eeshoponline.com");
+        //webView.loadUrl("https://sslsn.org/dashboard");
+
+        webView.setDownloadListener(new DownloadListener() {
+            @Override
+            public void onDownloadStart(String url, String userAgent, String contentDisposition, String mimeType, long contentLength) {
+                DownloadManager.Request request = new DownloadManager.Request(Uri.parse(url));
+
+                request.setMimeType(mimeType);
+                //------------------------COOKIE!!------------------------
+                String cookies = CookieManager.getInstance().getCookie(url);
+                request.addRequestHeader("cookie", cookies);
+                //------------------------COOKIE!!------------------------
+                request.addRequestHeader("User-Agent", userAgent);
+                request.setDescription("Downloading file...");
+                request.setTitle(URLUtil.guessFileName(url, contentDisposition, mimeType));
+                request.allowScanningByMediaScanner();
+                request.setNotificationVisibility(DownloadManager.Request.VISIBILITY_VISIBLE_NOTIFY_COMPLETED);
+                request.setDestinationInExternalPublicDir(Environment.DIRECTORY_DOWNLOADS, URLUtil.guessFileName(url, contentDisposition, mimeType));
+                DownloadManager dm = (DownloadManager) getSystemService(DOWNLOAD_SERVICE);
+                dm.enqueue(request);
+                Toast.makeText(getApplicationContext(), "Downloading File", Toast.LENGTH_LONG).show();
+            }
+        });
 
         webView.setWebChromeClient(new WebChromeClient()
         {
@@ -123,7 +148,6 @@ public class MainActivity extends AppCompatActivity {
                     public void run() {
                         swipeRefreshLayout.setRefreshing(false);
                         webView.loadUrl("javascript:window.location.reload( true )");
-                        //webView.reload();
                     }
                 },  3000);
             }
